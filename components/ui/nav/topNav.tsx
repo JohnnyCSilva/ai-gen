@@ -17,7 +17,7 @@ export default function topNav() {
   const { isSignedIn, user } = useUser();
 
   return (
-    <nav className="flex justify-between items-center p-8 shadow">
+    <nav className="flex justify-between items-center p-8 shadow-sm border-b">
       <Link href="/">AI Gen</Link>
 
       <div className="flex space-x-4">

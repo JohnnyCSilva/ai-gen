@@ -13,37 +13,33 @@ export default function sideNav() {
   const menuItems = [
     {
       name: "Dashboard",
-      icon: <LayoutDashboard />,
+      icon: <LayoutDashboard size={20} />,
       link: "/dashboard",
     },
     {
       name: "History",
-      icon: <FileClock />,
+      icon: <FileClock size={20} />,
       link: "/dashboard/history",
     },
     {
       name: "Wallet",
-      icon: <Wallet />,
+      icon: <Wallet size={20} />,
       link: "/dashboard/billing",
     },
     {
       name: "Settings",
-      icon: <Settings />,
+      icon: <Settings size={20} />,
       link: "/dashboard/settings",
     },
   ];
 
   return (
-    <div className="h-fit p-8 shadow-sm border flex flex-row justify-center gap-2 w-full md:h-screen md:flex-col md:justify-left md:justify-start">
+    <div className="h-fit p-8 shadow-sm flex flex-row justify-center gap-2 w-full md:h-screen md:flex-col md:justify-left md:justify-start">
       {menuItems.map((item, index) => (
         <Link key={index} href={item.link} className="w-fit md:w-full">
           <div
             className={`${
-              path === item.link
-                ? theme === "dark"
-                  ? "bg-white text-black"
-                  : "bg-black text-white"
-                : "hover:bg-gray-200/50"
+              path === item.link ? "bg-accent" : "hover:bg-accent"
             } flex items-center space-x-4 p-4 rounded-xl cursor-pointer transition w-fit md:w-full`}>
             {item.icon}
             <span className="hidden md:inline">{item.name}</span>
