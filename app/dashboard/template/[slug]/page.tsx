@@ -24,22 +24,7 @@ import { runAiTextModel, saveQuery } from "@/actions/ai";
 
 import { useUser } from "@clerk/nextjs";
 
-export interface Template {
-  name: string;
-  slug: string;
-  icon: string;
-  desc: string;
-  category: string;
-  aiPrompt: string;
-  form: Form[];
-}
-
-export interface Form {
-  label: string;
-  field: string;
-  name: string;
-  required: boolean;
-}
+import { Template, Form } from "@/utils/types";
 
 export default function Page({ params }: { params: { slug: string } }) {
   const t = template.find((item) => item.slug === params.slug) as Template;

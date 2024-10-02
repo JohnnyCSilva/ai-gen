@@ -67,3 +67,45 @@ export async function getQueries(
     return { ok: false };
   }
 }
+
+export async function usageCount(email: string) {
+  try {
+    await db();
+
+    const currentDate = new Date();
+    const currentMonth = currentDate.getMonth() + 1;
+    const currentYear = currentDate.getFullYear();
+
+    const result = await Query.aggregate([
+      {
+        $match: {
+          email,
+          $expr: {
+            $and: [
+              { $eq: [{ $year: "$createdAt" }, currentYear] },
+              { $eq: [{ $month: "$createdAt" }, currentMonth] },
+            ],
+          },
+        },
+      },
+      {
+        $project: {
+          wordCount: {
+            $size: { $split: [{ $trim: { input: "$content" } }, ""] },
+          },
+        },
+      },
+
+      {
+        $group: {
+          _id: null,
+          totalWords: { $sum: "$wordCount" },
+        },
+      },
+    ]);
+
+    return result.length > 0 ? result[0].totalWords : 0;
+  } catch (error) {
+    return { ok: false };
+  }
+}

@@ -6,12 +6,9 @@ import { useUser } from "@clerk/nextjs";
 
 import { Button } from "@/components/ui/button";
 import { Loader2Icon, Search } from "lucide-react";
+import QueryTable from "@/components/ui/history/queryTable";
 
-export interface QueryResponse {
-  queries: [];
-  totalPages: number;
-  totalQueries: number;
-}
+import { QueryResponse } from "@/utils/types";
 
 export default function page() {
   const [queries, setQueries] = useState([]);
@@ -75,7 +72,7 @@ export default function page() {
 
   return (
     <div>
-      <div className="p-8 pb-0 w-full flex">
+      <div className="p-8 pb-0 w-full flex gap-4 justify-center items-center">
         <div className="flex w-full justify-left border items-center rounded-xl pl-4 gap-4">
           <Search />
           <input
@@ -84,10 +81,10 @@ export default function page() {
           />
         </div>
 
-        <div className="flex justify-end w-full">
+        <div className="flex justify-end w-fit">
           <Button
             onClick={() => setPage(page + 1)}
-            className="w-fit py-6 mt-2 flex gap-2 rounded-xl"
+            className="w-fit py-6 flex gap-2 rounded-xl"
             variant="outline">
             {loading ? (
               <Loader2Icon size={16} className="animate-spin" />
@@ -96,6 +93,14 @@ export default function page() {
             )}
           </Button>
         </div>
+      </div>
+
+      {
+        //history table
+      }
+
+      <div className="p-4 flex flex-col">
+        <QueryTable data={queries} />
       </div>
     </div>
   );
