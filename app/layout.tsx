@@ -1,13 +1,11 @@
 import type { Metadata } from "next";
 import "./globals.css";
-
 import { Inter } from "next/font/google";
 import { Toaster } from "@/components/ui/toaster";
-
 import { ClerkProvider } from "@clerk/nextjs";
-import TopNav from "@/components/ui/nav/topNav";
-
+import TopNav from "@/components/nav/topNav";
 import { ThemeProvider } from "@/context/theme";
+import { UsageProvider } from "@/context/usage";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -30,11 +28,13 @@ export default function RootLayout({
             defaultTheme="system"
             enableSystem
             disableTransitionOnChange>
-            <header>
-              <TopNav />
-            </header>
-            {children}
-            <Toaster />
+            <UsageProvider>
+              <header>
+                <TopNav />
+              </header>
+              {children}
+              <Toaster />
+            </UsageProvider>
           </ThemeProvider>
         </body>
       </html>

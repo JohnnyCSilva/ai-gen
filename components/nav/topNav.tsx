@@ -9,7 +9,7 @@ import {
   useUser,
 } from "@clerk/nextjs";
 
-import ModeToggler from "@/components/ui/nav/modeToggler";
+import ModeToggler from "@/components/nav/modeToggler";
 
 import Link from "next/link";
 
@@ -18,7 +18,9 @@ export default function topNav() {
 
   return (
     <nav className="flex justify-between items-center p-8 shadow-sm border-b">
-      <Link href="/">AI Gen</Link>
+      <Link href="/">
+        <h2 className="font-bold text-2xl">Elysium AI</h2>
+      </Link>
 
       <div className="flex space-x-4">
         {isSignedIn && (
@@ -26,17 +28,11 @@ export default function topNav() {
             <Link href="/dashboard" className="flex items-center">
               Dashboard
             </Link>
-            <Link href="/about" className="flex items-center">
-              About
-            </Link>
-            <Link href="/contact" className="flex items-center">
-              Contact
-            </Link>
           </div>
         )}
 
-        <Link href="/pricing" className="flex items-center">
-          Pricing
+        <Link href="/membership" className="flex items-center">
+          Membership
         </Link>
 
         <SignedOut>

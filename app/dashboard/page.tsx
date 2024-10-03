@@ -7,6 +7,7 @@ import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
 import React, { useState } from "react";
+import MobileNav from "@/components/nav/mobileNav";
 
 export default function page() {
   const [search, setSearch] = useState("");
@@ -17,8 +18,12 @@ export default function page() {
 
   return (
     <div>
-      <div className="p-8 pb-0 w-full">
-        <div className="flex justify-left border items-center rounded-xl pl-4 gap-4">
+      <div className="p-8 pb-0 w-full flex justify-left items-center gap-x-4">
+        <div className="md:hidden block">
+          <MobileNav />
+        </div>
+
+        <div className="flex flex-1 justify-left border items-center rounded-xl pl-4 gap-4">
           <Search />
           <input
             className="w-full bg-transparent border-none focus:outline-none focus:border-none py-4 rounded-xl"
@@ -29,7 +34,7 @@ export default function page() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md-grid-cols-2 lg:grid-cols-3 gap-4 p-8">
+      <div className="grid grid-cols-1 md-grid-cols-2 lg:grid-cols-4 gap-4 p-8">
         {filteredTemplate.map((item, index) => (
           <Link key={item.slug} href={`/dashboard/template/${item.slug}`}>
             <div className="p-5 shadow-md rounded-xl border flex flex-col gap-2 cursor-pointer hover:shadow-xl transition-all dark:hover:border-white">

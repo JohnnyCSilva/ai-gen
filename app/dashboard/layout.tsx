@@ -1,4 +1,4 @@
-import SideNav from "@/components/ui/nav/sideNav";
+import SideNav from "@/components/nav/sideNav";
 import React from "react";
 
 export default function layout({
@@ -7,12 +7,12 @@ export default function layout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-0">
-      <div className="col-span-1 md:border-r md:border-b-0 border-r border-b-1 ">
+    <div className="flex md:flex-row flex-col">
+      <div className="hidden md:block w-1/5 md:border-r md:border-b-0 border-r border-b-1">
         <SideNav />
       </div>
 
-      <div className="col-span-1 md:col-span-3">{children}</div>
+      <div className="flex-1 overflow-y-scroll h-[900px]">{children}</div>
     </div>
   );
 }

@@ -6,7 +6,7 @@ import { useUser } from "@clerk/nextjs";
 
 import { Button } from "@/components/ui/button";
 import { Loader2Icon, Search } from "lucide-react";
-import QueryTable from "@/components/ui/history/queryTable";
+import QueryTable from "@/components/history/queryTable";
 
 import { QueryResponse } from "@/utils/types";
 

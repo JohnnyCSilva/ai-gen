@@ -91,11 +91,12 @@ export async function usageCount(email: string) {
       {
         $project: {
           wordCount: {
-            $size: { $split: [{ $trim: { input: "$content" } }, ""] },
+            $size: {
+              $split: [{ $trim: { input: "$content" } }, " "],
+            },
           },
         },
       },
-
       {
         $group: {
           _id: null,
@@ -106,6 +107,8 @@ export async function usageCount(email: string) {
 
     return result.length > 0 ? result[0].totalWords : 0;
   } catch (error) {
-    return { ok: false };
+    // Retorne 0 em caso de erro, garantindo que sempre retorne um número
+    console.error("Error fetching usage count:", error);
+    return 0;
   }
 }

@@ -1,1 +1,2 @@
 npm install @toast-ui/react-editor --legacy-peer-deps
+npm uninstall @toast-ui/react-editor --legacy-peer-deps
