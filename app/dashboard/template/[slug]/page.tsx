@@ -16,8 +16,6 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
 import MobileNav from "@/components/nav/mobileNav";
-import { Editor } from "@toast-ui/react-editor";
-import "@toast-ui/editor/dist/toastui-editor.css";
 import { useToast } from "@/hooks/use-toast";
 
 import template from "@/utils/template";
@@ -25,6 +23,10 @@ import { runAiTextModel, saveQuery } from "@/actions/ai";
 
 import { useUser } from "@clerk/nextjs";
 import { useUsage } from "@/context/usage";
+
+import "froala-editor/css/froala_style.min.css";
+import "froala-editor/css/froala_editor.pkgd.min.css";
+import FroalaEditorComponent from "react-froala-wysiwyg";
 
 import { Template, Form } from "@/utils/types";
 
@@ -170,14 +172,11 @@ export default function Page({ params }: { params: { slug: string } }) {
         </div>
 
         <div className="col-span-2 flex flex-col gap-2">
-          <Editor
-            ref={editorRef}
-            initialValue="Generated content..."
-            previewStyle="vertical"
-            height="auto"
-            font-size="16px"
-            initialEditType="wysiwyg"
-            useCommandShortcut={true}
+          <FroalaEditorComponent
+            tag="textarea"
+            config={{ placeholderText: "Edit Your Content Here" }}
+            model={content}
+            onModelChange={(model: any) => setContent(model)}
           />
         </div>
       </div>

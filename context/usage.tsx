@@ -18,7 +18,7 @@ export const UsageProvider = ({
 }: Readonly<{ children: React.ReactNode }>) => {
   // states
   const [count, setCount] = useState(0);
-  const [openModal, setOpenModal] = useState(true);
+  const [openModal, setOpenModal] = useState(false);
   // hooks
   const { user } = useUser();
   const email = user?.primaryEmailAddress?.emailAddress || "";
