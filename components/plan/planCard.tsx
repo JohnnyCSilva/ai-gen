@@ -16,7 +16,7 @@ export interface PlanCardProps {
   buttonVariant: string;
 }
 
-import { createCheckoutSession } from "@/api/stripe";
+import { createCheckoutSession } from "@/actions/stripe";
 
 export default function PlanCard(props: PlanCardProps) {
   const { toast } = useToast();
