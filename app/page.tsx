@@ -35,7 +35,7 @@ export default function Home() {
         </motion.p>
 
         <motion.h2
-          className="relative text-8xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-600 drop-shadow-2xl"
+          className="relative text-4xl md:text-8xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-600 drop-shadow-2xl"
           initial={textAnimation.initial}
           whileInView={textAnimation.whileInView}
           transition={{ ...textAnimation.transition, delay: 0.1 }}
@@ -44,7 +44,7 @@ export default function Home() {
         </motion.h2>
 
         <motion.p
-          className="w-[800px] text-white text-xl text-center"
+          className="w-full px-4 md:px-0 md:w-[800px] text-white text-xl text-center"
           initial={textAnimation.initial}
           whileInView={textAnimation.whileInView}
           transition={{ ...textAnimation.transition, delay: 0.2 }}
@@ -61,8 +61,8 @@ export default function Home() {
         </Link>
       </div>
 
-      <div className="h-fit py-[100px] flex flex-col items-center justify-center gap-8 p-8 w-[1200px]">
-        <div className="flex justify-between items-center gap-8 w-full">
+      <div className="h-fit py-[100px] flex flex-col items-center justify-center gap-8 p-8 md:w-[1200px] w-full ">
+        <div className="flex md:flex-row flex-col justify-between items-center gap-8 w-full">
           <motion.h2
             className="text-6xl flex-1"
             initial={textAnimation.initial}
