@@ -6,6 +6,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import TopNav from "@/components/nav/topNav";
 import { ThemeProvider } from "@/context/theme";
 import { UsageProvider } from "@/context/usage";
+import { dark } from "@clerk/themes";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -20,7 +21,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider>
+    <ClerkProvider appearance={{ baseTheme: dark }}>
       <html lang="en">
         <body className={inter.className}>
           <ThemeProvider

@@ -42,7 +42,7 @@ export default function Page({ params }: { params: { slug: string } }) {
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);
   const [coppied, setCoppied] = useState(false);
-  const { fetchUsage } = useUsage();
+  const { fetchUsage, subscribed, count } = useUsage();
 
   // Usando useRef para acessar a instância do editor
   const editorRef = useRef<any>(null);
@@ -161,12 +161,18 @@ export default function Page({ params }: { params: { slug: string } }) {
             <Button
               type="submit"
               className="w-full py-6 mt-2"
-              disabled={loading}>
-              {loading ? (
+              disabled={
+                loading ||
+                (!subscribed &&
+                  count >= Number(process.env.NEXT_PUBLIC_FREE_PLAN_USAGE))
+              }>
+              {loading && (
                 <Loader2Icon size={24} className="animate-spin mr-2" />
-              ) : (
-                "Generate Content"
               )}
+              {subscribed ||
+              count < Number(process.env.NEXT_PUBLIC_FREE_PLAN_USAGE)
+                ? "Generate Content"
+                : "Subscribe to Continue"}
             </Button>
           </form>
         </div>

@@ -10,14 +10,16 @@ import {
 } from "@clerk/nextjs";
 
 import ModeToggler from "@/components/nav/modeToggler";
-
 import Link from "next/link";
+
+import { useUsage } from "@/context/usage";
 
 export default function topNav() {
   const { isSignedIn, user } = useUser();
+  const { subscribed } = useUsage();
 
   return (
-    <nav className="flex justify-between items-center p-8 shadow-sm border-b">
+    <nav className="flex flex-col justify-between items-center p-8 shadow-sm border-b md:flex-row gap-2">
       <Link href="/">
         <h2 className="font-bold text-2xl">Elysium AI</h2>
       </Link>
@@ -31,9 +33,15 @@ export default function topNav() {
           </div>
         )}
 
-        <Link href="/membership" className="flex items-center">
-          Membership
+        <Link href="/generative" className="flex items-center">
+          Generative
         </Link>
+
+        {!subscribed && (
+          <Link href="/membership" className="flex items-center">
+            Membership
+          </Link>
+        )}
 
         <SignedOut>
           <SignInButton />

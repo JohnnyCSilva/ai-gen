@@ -40,7 +40,11 @@ export default function page() {
             <div className="p-5 shadow-md rounded-xl border flex flex-col gap-2 cursor-pointer hover:shadow-xl transition-all dark:hover:border-white">
               <Image src={item.icon} alt={item.name} width={25} height={25} />
               <h2 className="font-medium text-lg">{item.name}</h2>
-              <p className="text-gray-500 line-clam-3">{item.desc}</p>
+              <p className="text-gray-500">
+                {item.desc.length > 50
+                  ? item.desc.substring(0, 50) + "..."
+                  : item.desc}
+              </p>
             </div>
           </Link>
         ))}

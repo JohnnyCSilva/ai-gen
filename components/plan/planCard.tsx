@@ -1,11 +1,12 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { SignInButton, useUser } from "@clerk/nextjs";
+import { Loader2Icon } from "lucide-react";
 
 import { useRouter } from "next/navigation";
 
@@ -21,6 +22,7 @@ import { createCheckoutSession } from "@/actions/stripe";
 export default function PlanCard(props: PlanCardProps) {
   const { toast } = useToast();
   const { isSignedIn, isLoaded } = useUser();
+  const [loading, setLoading] = useState(false);
 
   const router = useRouter();
 
@@ -34,6 +36,7 @@ export default function PlanCard(props: PlanCardProps) {
       });
       return;
     } else {
+      setLoading(true);
       try {
         const response = await createCheckoutSession();
 
@@ -54,6 +57,8 @@ export default function PlanCard(props: PlanCardProps) {
           description: "An error occurred. Please try again later.",
         });
         console.log(error);
+      } finally {
+        setLoading(false);
       }
     }
   };
@@ -112,7 +117,16 @@ export default function PlanCard(props: PlanCardProps) {
         <li>- Faster processing times</li>
       </ul>
 
-      {!isLoaded ? (
+      {loading ? (
+        <div>
+          <Button
+            className="w-full mt-10 py-6 flex gap-2 rounded-xl"
+            disabled={loading}>
+            <Loader2Icon className="animate-spin" />
+            Processing
+          </Button>
+        </div>
+      ) : !isLoaded ? (
         ""
       ) : !isSignedIn ? (
         <Button

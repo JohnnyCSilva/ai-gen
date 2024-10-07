@@ -7,9 +7,9 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 export default function Usage() {
-  const { count } = useUsage();
+  const { count, subscribed } = useUsage();
 
-  const credits = 10000;
+  const credits = Number(process.env.NEXT_PUBLIC_FREE_PLAN_USAGE);
   const percentage = (count / credits) * 100;
 
   return (
@@ -19,11 +19,13 @@ export default function Usage() {
           <h2 className=" text-ml"> Credits</h2>
 
           <h2 className="text-sm md:text-ml">
-            {count} / {credits} credits used
+            {subscribed
+              ? "Unlimited Credits"
+              : `${count} / ${credits} credits used`}
           </h2>
         </div>
 
-        <div className="h-2 bg-gray-700 w-full rounded-full mt-4">
+        <div className="h-2 bg-gray-700 w-full rounded-full mt-4 overflow-hidden">
           <div
             className="h-2 bg-slate-200 rounded-full"
             style={{ width: `${percentage}%` }}></div>

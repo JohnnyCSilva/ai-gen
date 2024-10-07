@@ -58,7 +58,62 @@ export async function createCheckoutSession(): Promise<CheckoutSessionResponse> 
 
     return { url: sessionPaymentMonthly.url ?? undefined };
   } catch (error: any) {
-    console.log(error.message);
+    console.log(error);
     return { error: "Error creating Stripe Checkout Session" };
+  }
+}
+
+export async function checkSubscription() {
+  const user = await currentUser();
+  const customerEmail = user?.primaryEmailAddress?.emailAddress;
+
+  try {
+    const transaction = await Transaction.findOne({
+      customerEmail,
+      status: "complete",
+    });
+
+    if (transaction && transaction.subscriptionId) {
+      const subscription = await stripe.subscriptions.retrieve(
+        transaction.subscriptionId
+      );
+
+      if (subscription.status === "active") {
+        return { ok: true };
+      } else {
+        return { ok: false };
+      }
+    }
+  } catch (error: any) {
+    console.log(error);
+    return { error: "Error checking subscription" };
+  }
+}
+
+export async function createCustomerPortalSession() {
+  const user = await currentUser();
+  const customerEmail = user?.primaryEmailAddress?.emailAddress;
+
+  if (!customerEmail) {
+    return { error: "No customer email found" };
+  }
+
+  try {
+    await db();
+    const existingTransaction = await Transaction.findOne({ customerEmail });
+
+    if (!existingTransaction) {
+      return { error: "No transaction found" };
+    }
+
+    const portalSession = await stripe.billingPortal.sessions.create({
+      customer: existingTransaction.customerId,
+      return_url: `${process.env.NEXT_PUBLIC_BASE_URL}/dashboard`,
+    });
+
+    return portalSession.url ?? `${process.env.NEXT_PUBLIC_BASE_URL}/dashboard`;
+  } catch (error: any) {
+    console.log(error);
+    return null;
   }
 }

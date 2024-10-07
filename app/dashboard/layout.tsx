@@ -12,7 +12,7 @@ export default function layout({
         <SideNav />
       </div>
 
-      <div className="flex-1 overflow-y-scroll h-[900px]">{children}</div>
+      <div className="flex-1 overflow-y-scroll h-[800px]">{children}</div>
     </div>
   );
 }
