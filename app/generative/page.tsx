@@ -2,24 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { runAiTextModel } from "@/actions/ai";
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-
 import { useToast } from "@/hooks/use-toast";
-
 import ReactMarkdown from "react-markdown";
-
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-
 import {
   Search,
   CloudSun,
@@ -48,14 +34,22 @@ interface InputData {
 export default function Page() {
   const [textToGenerate, setTextToGenerate] = useState("");
   const [generatedText, setGeneratedText] = useState("");
-
   const [loading, setLoading] = useState(false);
   const [boxes, setBoxes] = useState<InputData[]>([]);
   const { toast } = useToast();
 
   useEffect(() => {
-    const data = getRandomInputs(inputsData);
-    setBoxes(data);
+    const handleResize = () => {
+      // Verificar largura da tela e ajustar o número de caixas
+      const isMobile = window.innerWidth < 768; // Define o breakpoint (mobile abaixo de 768px)
+      const data = getRandomInputs(inputsData, isMobile ? 2 : 4);
+      setBoxes(data);
+    };
+
+    handleResize(); // Chamar ao carregar a página
+    window.addEventListener("resize", handleResize); // Adicionar listener para resize
+
+    return () => window.removeEventListener("resize", handleResize); // Limpar listener
   }, []);
 
   const handleGenerateText = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -160,7 +154,6 @@ export default function Page() {
     },
   ];
 
-  //generate 4 random boxes
   const getRandomInputs = (data: InputData[], num: number = 4): InputData[] => {
     const shuffled = data.sort(() => 0.5 - Math.random());
     return shuffled.slice(0, num);
@@ -196,7 +189,7 @@ export default function Page() {
               <div
                 key={index}
                 onClick={() => setTextToGenerate(box.text)}
-                className="flex flex-col p-4 border rounded-xl w-full gap-4  cursor-pointer transition hover:bg-accent">
+                className="flex flex-col p-4 border rounded-xl w-full gap-4 cursor-pointer transition hover:bg-accent">
                 {box.icon === "Search" && <Search className="text-blue-400" />}
                 {box.icon === "CloudSun" && (
                   <CloudSun className="text-yellow-400" />
@@ -239,7 +232,7 @@ export default function Page() {
             value={textToGenerate}
             onChange={(e) => setTextToGenerate(e.target.value)}
             placeholder="Enter text to generate..."
-            className="w-full text-md py-8 px-6 rouded-xl bg-[#09090b]"
+            className="w-full text-md py-8 px-6 rounded-xl bg-[#09090b]"
           />
           <Button
             disabled={loading}
