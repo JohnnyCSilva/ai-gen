@@ -233,7 +233,7 @@ export default function Page() {
             className="w-[50px] h-[50px] object-contain animate-bounce"
           />
 
-          <div className="flex flex-col items-start justify-center gap-4 w-full md:flex-row ">
+          <div className="flex flex-row items-start justify-center gap-4 w-full">
             {boxes.map((box, index) => (
               <div
                 key={index}
