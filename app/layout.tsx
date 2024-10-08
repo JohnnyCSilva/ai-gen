@@ -11,7 +11,7 @@ import { dark } from "@clerk/themes";
 export const metadata: Metadata = {
   title: "Elysium AI",
   description:
-    "Elysium AI is a generative AI platform that helps you create content.",
+    "This is your friendly neighborhood AI, here to help you with your writing needs.",
 };
 
 const inter = Inter({ subsets: ["latin"] });

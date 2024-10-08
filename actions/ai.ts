@@ -7,6 +7,13 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
 const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
 const genAI = new GoogleGenerativeAI(apiKey);
 
+interface Conversation {
+  user: string;
+  ai: string;
+}
+
+const maxHistoryLength = process.env.HISTORY_LENGTH || 5;
+
 export async function runAiTextModel(prompToGenerate: string): Promise<string> {
   const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
@@ -17,6 +24,33 @@ export async function runAiTextModel(prompToGenerate: string): Promise<string> {
   const text = response.text();
 
   return text;
+}
+
+export async function conversationModel(
+  prompt: string,
+  conversationHistory: Conversation[],
+  modelType: "pro" | "flash"
+): Promise<string> {
+  const model = genAI.getGenerativeModel({
+    model: modelType === "pro" ? "gemini-1.5-pro" : "gemini-1.5-flash",
+  });
+
+  const conversationLength = conversationHistory.slice(-maxHistoryLength);
+
+  let enhancedPrompt = "";
+
+  if (conversationLength.length === 0) {
+    enhancedPrompt = `Responde à pergunta: ${prompt}`;
+  } else {
+    enhancedPrompt = `Com base na seguinte conversa, responde à pergunta:\n${conversationLength
+      .map((message) => `${message.user}: ${message.ai}`)
+      .join("\n")}\n${prompt}`;
+  }
+
+  const response = await model.generateContent(enhancedPrompt);
+  const aiResponse = await response.response.text();
+
+  return aiResponse;
 }
 
 export async function saveQuery(

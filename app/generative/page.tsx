@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { runAiTextModel } from "@/actions/ai";
+import { conversationModel } from "@/actions/ai"; // Atualizado para usar o modelo de conversa
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
+import { useUser } from "@clerk/nextjs";
 import ReactMarkdown from "react-markdown";
 import {
   Search,
@@ -25,31 +26,66 @@ import {
   Sparkle,
 } from "lucide-react";
 
+interface Conversation {
+  user: string;
+  ai: string;
+}
+
 interface InputData {
   icon: string;
   text: string;
   color: string;
 }
 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
 export default function Page() {
   const [textToGenerate, setTextToGenerate] = useState("");
-  const [generatedText, setGeneratedText] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [conversationHistory, setConversationHistory] = useState<
+    Conversation[]
+  >([]);
+
   const [boxes, setBoxes] = useState<InputData[]>([]);
+  const [chatBotModel, setChatBotModel] = useState<"flash" | "pro">("flash");
+  const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+  const { user } = useUser();
+  const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {
-      // Verificar largura da tela e ajustar o número de caixas
-      const isMobile = window.innerWidth < 768; // Define o breakpoint (mobile abaixo de 768px)
+      const isMobile = window.innerWidth < 768;
       const data = getRandomInputs(inputsData, isMobile ? 2 : 4);
       setBoxes(data);
     };
 
-    handleResize(); // Chamar ao carregar a página
-    window.addEventListener("resize", handleResize); // Adicionar listener para resize
+    handleResize();
+    window.addEventListener("resize", handleResize);
 
-    return () => window.removeEventListener("resize", handleResize); // Limpar listener
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      // Se o scroll for maior que 100px, altera o estado para true
+      if (window.scrollY > 100) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const handleGenerateText = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -59,25 +95,20 @@ export default function Page() {
     setLoading(true);
 
     try {
-      const data = await runAiTextModel(textToGenerate);
-      setGeneratedText(data);
+      const aiResponse = await conversationModel(
+        textToGenerate,
+        conversationHistory,
+        chatBotModel
+      );
+      setConversationHistory([
+        ...conversationHistory,
+        { user: textToGenerate, ai: aiResponse },
+      ]);
+      setTextToGenerate("");
     } catch (error) {
       console.error(error);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const copyToClipboard = async () => {
-    try {
-      await navigator.clipboard.writeText(generatedText);
-      toast({
-        description: "Copied to Clipboard",
-      });
-    } catch {
-      toast({
-        description: "Failed to copy to Clipboard",
-      });
     }
   };
 
@@ -160,36 +191,54 @@ export default function Page() {
   };
 
   return (
-    <main className="flex flex-col items-center justify-end h-full p-4 md:p-12 w-full">
-      <Button
-        className="rounded-xl p-6 mb-8 mt-4 md:mt-0 w-fit"
-        variant="outline">
-        Elysium 1.5 Flash
-      </Button>
+    <main className="flex flex-col items-center justify-end h-fit p-4 md:p-4 w-full text-gray-100">
+      <div
+        className={`w-full flex  fixed ${
+          isScrolled ? "md:top-8" : "md:top-32"
+        }  md:left-8 transition-all duration-300 top-[32px] md:justify-start justify-center`}>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="px-6 py-6 rounded-xl">
+              {chatBotModel === "flash"
+                ? "Elysium 1.5 Flash"
+                : "Elysium 1.5 Pro"}
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-56">
+            <DropdownMenuLabel>Model</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuRadioGroup
+              value={chatBotModel}
+              onValueChange={(value: string) => {
+                if (value === "flash" || value === "pro") {
+                  setChatBotModel(value as "flash" | "pro");
+                }
+              }}>
+              <DropdownMenuRadioItem value="pro">
+                Elysium 1.5 Pro
+              </DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value="flash">
+                Elysium 1.5 Flash
+              </DropdownMenuRadioItem>
+            </DropdownMenuRadioGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
 
-      {generatedText && (
-        <div className="w-full md:w-1/2 flex flex-col">
-          <div className="w-full flex flex-col border rounded-xl p-8 gap-2">
-            <ReactMarkdown>{generatedText}</ReactMarkdown>
-          </div>
+      {conversationHistory.length === 0 ? (
+        <div className="md:w-1/2 w-full space-y-24 md:h-[700px] h-[500px] flex flex-col items-center justify-center">
+          <img
+            src="/logo.png"
+            alt="AI"
+            className="w-[50px] h-[50px] object-contain animate-bounce"
+          />
 
-          <Button
-            variant="outline"
-            className="rounded-xl p-6 w-fit mb-24 mt-4"
-            onClick={copyToClipboard}>
-            Copy to Clipboard
-          </Button>
-        </div>
-      )}
-
-      <div className="flex flex-col items-center justify-center gap-4 mt-4 fixed bottom-2 w-full md:w-1/2 p-4 md:p-8">
-        {!generatedText && (
-          <div className="flex flex-col items-center justify-center gap-4 w-full md:flex-row ">
+          <div className="flex flex-col items-start justify-center gap-4 w-full md:flex-row ">
             {boxes.map((box, index) => (
               <div
                 key={index}
                 onClick={() => setTextToGenerate(box.text)}
-                className="flex flex-col p-4 border rounded-xl w-full gap-4 cursor-pointer transition hover:bg-accent">
+                className="flex flex-col p-4 border rounded-xl md:w-full gap-4 cursor-pointer transition hover:bg-accent">
                 {box.icon === "Search" && <Search className="text-blue-400" />}
                 {box.icon === "CloudSun" && (
                   <CloudSun className="text-yellow-400" />
@@ -223,8 +272,23 @@ export default function Page() {
               </div>
             ))}
           </div>
-        )}
+        </div>
+      ) : (
+        <div className="w-full md:w-1/2  flex flex-col rounded-xl p-4 gap-2 overflow-y-auto min-h-full mb-32">
+          {conversationHistory.map((message, index) => (
+            <div key={index} className="w-full flex flex-col mt-6 space-y-8">
+              <div className="bg-gray-100/10 text-white p-4 w-2/3 rounded-xl mt-4">
+                <ReactMarkdown>{message.user}</ReactMarkdown>
+              </div>
+              <div className="flex gap-4 flex-col items-start w-full mt-2">
+                <ReactMarkdown>{message.ai}</ReactMarkdown>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
+      <div className="flex flex-col items-center justify-center gap-4 mt-4 fixed bottom-2 w-full md:w-1/2 p-4 md:p-8">
         <form
           className="w-full mt-4 flex flex-row items-left justify-left gap-4"
           onSubmit={handleGenerateText}>
@@ -252,3 +316,13 @@ export default function Page() {
     </main>
   );
 }
+
+/*
+<Button
+          variant="outline"
+          className="rounded-xl p-6 w-fit mb-4 mt-4 bg-gray-700 text-white hover:bg-gray-600"
+          onClick={copyToClipboard}>
+          Copy Conversation to Clipboard
+        </Button>
+
+        */
