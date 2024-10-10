@@ -53,7 +53,7 @@ export default function MobileNav() {
               </Link>
             ))}
 
-            <ModeToggler />
+            {/*<ModeToggler />*/}
           </div>
         </SheetContent>
       </Sheet>

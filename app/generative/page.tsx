@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { conversationModel } from "@/actions/ai"; // Atualizado para usar o modelo de conversa
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,22 +8,23 @@ import { useToast } from "@/hooks/use-toast";
 import { useUser } from "@clerk/nextjs";
 import ReactMarkdown from "react-markdown";
 import {
-  Search,
-  CloudSun,
-  NotebookPen,
-  Beef,
-  Book,
-  Sun,
-  Trees,
-  Leaf,
-  Globe,
-  Droplet,
-  Bolt,
-  ChartLine,
-  User,
-  Shield,
+  Brain,
+  Rocket,
+  Code,
+  Camera,
+  Music,
+  Dna,
+  Palette,
+  Atom,
+  Building2,
+  HeartPulse,
+  Languages,
+  Boxes,
+  Lightbulb,
+  Users,
+  Compass,
   Loader2Icon,
-  Sparkle,
+  Sparkles,
 } from "lucide-react";
 
 interface Conversation {
@@ -52,6 +53,7 @@ export default function Page() {
   const [conversationHistory, setConversationHistory] = useState<
     Conversation[]
   >([]);
+  const chatEndRef = useRef<HTMLDivElement | null>(null);
 
   const [boxes, setBoxes] = useState<InputData[]>([]);
   const [chatBotModel, setChatBotModel] = useState<"flash" | "pro">("flash");
@@ -114,76 +116,87 @@ export default function Page() {
 
   const inputsData: InputData[] = [
     {
-      icon: "Search",
-      text: "Give me articles about global warming.",
-      color: "text-blue-400",
+      icon: "Brain",
+      text: "Explain the concept of neuroplasticity.",
+      color: "text-pink-400",
     },
     {
-      icon: "CloudSun",
-      text: "It's going to rain in Portugal in the next 3 days?",
-      color: "text-yellow-400",
+      icon: "Rocket",
+      text: "What are the latest developments in space exploration?",
+      color: "text-purple-500",
     },
     {
-      icon: "NotebookPen",
-      text: "Create a poem in the style of Camões about Next.js.",
-      color: "text-purple-400",
+      icon: "Code",
+      text: "Compare functional and object-oriented programming paradigms.",
+      color: "text-green-500",
     },
     {
-      icon: "Beef",
-      text: "Create a recipe low carbs and high protein.",
-      color: "text-red-400",
+      icon: "Camera",
+      text: "Describe the evolution of photography from film to digital.",
+      color: "text-gray-600",
     },
     {
-      icon: "Book",
-      text: "Summarize the latest research on climate change.",
-      color: "text-green-400",
-    },
-    {
-      icon: "Sun",
-      text: "What are the benefits of solar energy?",
-      color: "text-orange-400",
-    },
-    {
-      icon: "TreePine",
-      text: "How can I contribute to reforestation efforts?",
-      color: "text-brown-400",
-    },
-    {
-      icon: "Leaf",
-      text: "What are the effects of deforestation?",
-      color: "text-green-600",
-    },
-    {
-      icon: "Globe",
-      text: "What can we do to combat global warming?",
-      color: "text-blue-600",
-    },
-    {
-      icon: "Droplet",
-      text: "How to conserve water in daily life?",
-      color: "text-lightblue-400",
-    },
-    {
-      icon: "Bolt",
-      text: "What are the challenges of renewable energy?",
+      icon: "Music",
+      text: "How does music affect cognitive function?",
       color: "text-indigo-400",
     },
     {
-      icon: "ChartLine",
-      text: "Explain the greenhouse effect.",
-      color: "text-teal-400",
+      icon: "Dna",
+      text: "Explain CRISPR gene editing technology and its potential applications.",
+      color: "text-blue-600",
     },
     {
-      icon: "PersonStanding",
-      text: "How does climate change affect biodiversity?",
-      color: "text-red-600",
+      icon: "Palette",
+      text: "Analyze the impact of AI on creative industries.",
+      color: "text-yellow-500",
     },
     {
-      icon: "Shield",
-      text: "What policies can help mitigate climate change?",
-      color: "text-yellow-600",
+      icon: "Atom",
+      text: "What are the latest breakthroughs in quantum computing?",
+      color: "text-teal-500",
+    },
+    {
+      icon: "Building2",
+      text: "Describe sustainable architecture practices and their benefits.",
+      color: "text-orange-400",
+    },
+    {
+      icon: "HeartPulse",
+      text: "How do wearable devices impact personal health management?",
+      color: "text-red-500",
+    },
+    {
+      icon: "Languages",
+      text: "Discuss the influence of technology on language evolution.",
+      color: "text-cyan-600",
+    },
+    {
+      icon: "Boxes",
+      text: "Explain the potential applications of blockchain beyond cryptocurrency.",
+      color: "text-blue-400",
+    },
+    {
+      icon: "Lightbulb",
+      text: "What are some innovative solutions for urban waste management?",
+      color: "text-amber-500",
+    },
+    {
+      icon: "Users",
+      text: "How is social media reshaping political discourse?",
+      color: "text-violet-500",
+    },
+    {
+      icon: "Compass",
+      text: "Describe the ethical considerations in artificial intelligence development.",
+      color: "text-emerald-600",
     },
   ];
+
+  useEffect(() => {
+    if (chatEndRef.current) {
+      chatEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [conversationHistory]);
 
   const getRandomInputs = (data: InputData[], num: number = 4): InputData[] => {
     const shuffled = data.sort(() => 0.5 - Math.random());
@@ -239,39 +252,49 @@ export default function Page() {
                 key={index}
                 onClick={() => setTextToGenerate(box.text)}
                 className="flex flex-col p-4 border rounded-xl md:w-full gap-4 cursor-pointer transition hover:bg-accent">
-                {box.icon === "Search" && <Search className="text-blue-400" />}
-                {box.icon === "CloudSun" && (
-                  <CloudSun className="text-yellow-400" />
+                {box.icon === "Brain" && <Brain className="text-blue-400" />}
+                {box.icon === "Rocket" && (
+                  <Rocket className="text-yellow-400" />
                 )}
-                {box.icon === "NotebookPen" && (
-                  <NotebookPen className="text-purple-400" />
+                {box.icon === "Code" && <Code className="text-purple-400" />}
+                {box.icon === "Camera" && <Camera className="text-red-400" />}
+                {box.icon === "Music" && <Music className="text-green-400" />}
+                {box.icon === "Dna" && <Dna className="text-orange-400" />}
+                {box.icon === "Palette" && (
+                  <Palette className="text-brown-400" />
                 )}
-                {box.icon === "Beef" && <Beef className="text-red-400" />}
-                {box.icon === "Book" && <Book className="text-green-400" />}
-                {box.icon === "Sun" && <Sun className="text-orange-400" />}
-                {box.icon === "TreePine" && (
-                  <Trees className="text-brown-400" />
+                {box.icon === "Atom" && <Atom className="text-green-600" />}
+                {box.icon === "Building2" && (
+                  <Building2 className="text-blue-600" />
                 )}
-                {box.icon === "Leaf" && <Leaf className="text-green-600" />}
-                {box.icon === "Globe" && <Globe className="text-blue-600" />}
-                {box.icon === "Droplet" && (
-                  <Droplet className="text-lightblue-400" />
+                {box.icon === "HeartPulse" && (
+                  <HeartPulse className="text-lightblue-400" />
                 )}
-                {box.icon === "Bolt" && <Bolt className="text-indigo-400" />}
-                {box.icon === "ChartLine" && (
-                  <ChartLine className="text-teal-400" />
+                {box.icon === "Languages" && (
+                  <Languages className="text-indigo-400" />
                 )}
-                {box.icon === "PersonStanding" && (
-                  <User className="text-red-600" />
+                {box.icon === "Boxes" && <Boxes className="text-teal-400" />}
+                {box.icon === "Lightbulb" && (
+                  <Lightbulb className="text-red-600" />
                 )}
-                {box.icon === "Shield" && (
-                  <Shield className="text-yellow-600" />
+                {box.icon === "Users" && <Users className="text-yellow-600" />}
+                {box.icon === "Compass" && (
+                  <Compass className="text-purple-600" />
                 )}
 
                 <p className="text-sm text-gray-300 text-normal">{box.text}</p>
               </div>
             ))}
           </div>
+
+          {loading && (
+            <div className="flex flex-row items-center justify-start gap-2 mt-8">
+              <img src="/logo.png" alt="AI" className="w-8 h-8" />
+              <p className="text-transparent ml-4 bg-clip-text bg-gradient-to-r from-gray-600 via-white to-gray-600 animate-glow">
+                Generating response...
+              </p>
+            </div>
+          )}
         </div>
       ) : (
         <div className="w-full md:w-1/2  flex flex-col rounded-xl p-4 gap-2 overflow-y-auto min-h-full mb-32">
@@ -285,8 +308,26 @@ export default function Page() {
               </div>
             </div>
           ))}
+
+          {loading && (
+            <div className="flex flex-row items-center justify-start gap-2 mt-8">
+              <img src="/logo.png" alt="AI" className="w-8 h-8" />
+              <p className="text-transparent ml-4 bg-clip-text bg-gradient-to-r from-gray-600 via-white to-gray-600 animate-glow">
+                Generating response...
+              </p>
+            </div>
+          )}
+
+          <Button
+            variant="outline"
+            onClick={() => setConversationHistory([])}
+            className="rounded-xl p-6 mt-8 cursor-pointer w-fit text-white">
+            Reset AI Memory
+          </Button>
         </div>
       )}
+
+      <div ref={chatEndRef} />
 
       <div className="flex flex-col items-center justify-center gap-4 mt-4 fixed bottom-2 w-full md:w-1/2 p-4 md:p-8">
         <form
@@ -306,7 +347,7 @@ export default function Page() {
               <Loader2Icon size={24} className="animate-spin" />
             ) : (
               <p className="flex flex-row gap-2 items-center">
-                <Sparkle size={16} />{" "}
+                <Sparkles size={16} />{" "}
                 <span className="md:block hidden">Generate</span>
               </p>
             )}

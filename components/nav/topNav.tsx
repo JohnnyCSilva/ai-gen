@@ -55,7 +55,7 @@ export default function topNav() {
           <UserButton />
         </SignedIn>
 
-        <ModeToggler />
+        {/*<ModeToggler />*/}
       </div>
 
       <div className="md:hidden block">

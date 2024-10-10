@@ -90,3 +90,19 @@ body {
     background-position: 100% 0;
   }
 }
+
+@keyframes glow {
+  0% {
+    background-position: 0%;
+  }
+  50% {
+    background-position: 100%;
+  }
+  100% {
+    background-position: 0%;
+  }
+}
+.animate-glow {
+  background-size: 300%;
+  animation: glow 2s ease-in-out infinite;
+}

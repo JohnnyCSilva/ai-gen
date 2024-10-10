@@ -15,7 +15,11 @@ interface Conversation {
 const maxHistoryLength = process.env.HISTORY_LENGTH || 5;
 
 export async function runAiTextModel(prompToGenerate: string): Promise<string> {
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+  const model = genAI.getGenerativeModel({
+    model: "gemini-1.5-flash",
+    instruction:
+      "Your name is Elysium and you are a helpful AI assistant.  Use less emojis and more formal language.",
+  });
 
   const prompt = prompToGenerate;
 
@@ -33,6 +37,15 @@ export async function conversationModel(
 ): Promise<string> {
   const model = genAI.getGenerativeModel({
     model: modelType === "pro" ? "gemini-1.5-pro" : "gemini-1.5-flash",
+    instructions: `
+      Your name is Elysium and you are a helpful AI assistant. 
+      Follow these guidelines:
+      1. Use formal language and avoid emojis.
+      2. Provide clear and concise responses.
+      3. If you're unsure about something, admit it rather than guessing.
+      4. Always maintain a respectful and professional tone.
+      5. Tailor your responses to the context of the conversation.
+    `,
   });
 
   const conversationLength = conversationHistory.slice(-maxHistoryLength);
@@ -40,11 +53,27 @@ export async function conversationModel(
   let enhancedPrompt = "";
 
   if (conversationLength.length === 0) {
-    enhancedPrompt = `Responde à pergunta: ${prompt}`;
+    enhancedPrompt = `
+      Please answer the following question:
+      
+      Question: ${prompt}
+
+      Provide a clear and concise response.
+    `;
   } else {
-    enhancedPrompt = `Com base na seguinte conversa, responde à pergunta:\n${conversationLength
-      .map((message) => `${message.user}: ${message.ai}`)
-      .join("\n")}\n${prompt}`;
+    enhancedPrompt = `
+      Consider the following conversation history:
+
+      ${conversationLength
+        .map((message) => `Human: ${message.user}\nAI: ${message.ai}`)
+        .join("\n\n")}
+
+      Now, please answer the following question:
+
+      Human: ${prompt}
+
+      Provide a response that takes into account the conversation history and directly addresses the question.
+    `;
   }
 
   const response = await model.generateContent(enhancedPrompt);
